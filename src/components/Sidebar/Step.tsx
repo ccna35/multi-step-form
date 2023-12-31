@@ -13,7 +13,9 @@ const Step = ({ stepNumber, text, currentStep }: StepProps) => {
         className={cn(
           "grid place-items-center rounded-full border text-white border-white size-10",
           {
-            "bg-white text-primary": currentStep === stepNumber,
+            "bg-white text-primary":
+              currentStep === stepNumber ||
+              (currentStep === 5 && stepNumber === 4),
           }
         )}
       >

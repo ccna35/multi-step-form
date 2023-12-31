@@ -4,6 +4,7 @@ import {
   UseFormGetValues,
   UseFormRegister,
   UseFormTrigger,
+  UseFormWatch,
   useForm,
 } from "react-hook-form";
 import Sidebar from "./components/Sidebar/Sidebar";
@@ -11,6 +12,8 @@ import { useState } from "react";
 import StepOne from "./components/Right Side/Steps/StepOne/StepOne";
 import StepTwo from "./components/Right Side/Steps/StepTwo/StepTwo";
 import StepThree from "./components/Right Side/Steps/StepThree/StepThree";
+import StepFour from "./components/Right Side/Steps/StepFour/StepFour";
+import Confirmation from "./components/Right Side/Confirmation/Confirmation";
 
 enum PlanEnum {
   arcade = "arcade",
@@ -24,7 +27,7 @@ export type Inputs = {
   phoneNumber: number;
   plan: PlanEnum;
   billingOption: boolean; // Yearly if true, monthly if false
-  addOns?: "Online service" | "Larger storage" | "Customizable Profile";
+  addOns?: "Online service" | "Larger storage" | "Customizable profile";
 };
 
 export type StepProps = {
@@ -34,16 +37,18 @@ export type StepProps = {
   currentStep: number;
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
   trigger: UseFormTrigger<Inputs>;
+  watch?: UseFormWatch<Inputs>;
 };
 
 function App() {
-  const [currentStep, setCurrentStep] = useState(2);
+  const [currentStep, setCurrentStep] = useState(1);
   const {
     register,
     handleSubmit,
     getValues,
     trigger,
     formState: { errors },
+    watch,
   } = useForm<Inputs>({ mode: "onChange" });
   const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
 
@@ -78,6 +83,7 @@ function App() {
                     currentStep={currentStep}
                     setCurrentStep={setCurrentStep}
                     trigger={trigger}
+                    watch={watch}
                   />
                 )}
 
@@ -91,6 +97,19 @@ function App() {
                     trigger={trigger}
                   />
                 )}
+
+                {currentStep === 4 && (
+                  <StepFour
+                    register={register}
+                    errors={errors}
+                    getValues={getValues}
+                    currentStep={currentStep}
+                    setCurrentStep={setCurrentStep}
+                    trigger={trigger}
+                  />
+                )}
+
+                {currentStep === 5 && <Confirmation />}
               </form>
             </div>
           </div>

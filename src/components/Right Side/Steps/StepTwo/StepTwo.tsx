@@ -1,22 +1,32 @@
 import Header from "../../Header";
-import { StepProps } from "../../../../App";
+import { Inputs, StepProps } from "../../../../App";
 import { cn } from "../../../../utils/utils";
-import { UseFormRegisterReturn } from "react-hook-form";
+import { UseFormGetValues, UseFormRegisterReturn } from "react-hook-form";
+import { planList } from "../../../../constants/constants";
 
-const planList: Omit<OptionProps, "register">[] = [
-  { img: "./icon-arcade.svg", planName: "arcade", price: 9 },
-  { img: "./icon-advanced.svg", planName: "advanced", price: 12 },
-  { img: "./icon-pro.svg", planName: "pro", price: 15 },
-];
+export type PlanList = {
+  img: string;
+  planName: "arcade" | "advanced" | "pro";
+  price: 9 | 12 | 15;
+};
 
 type OptionProps = {
   register: UseFormRegisterReturn;
   img: string;
   planName: "arcade" | "advanced" | "pro";
   price: 9 | 12 | 15;
+  billingOption: boolean | undefined;
+  getValues: UseFormGetValues<Inputs>;
 };
 
-const Option = ({ register, img, planName, price }: OptionProps) => {
+const Option = ({
+  register,
+  img,
+  planName,
+  price,
+  billingOption,
+  getValues,
+}: OptionProps) => {
   return (
     <div className="relative border rounded-lg hover:border-indigo-600 p-4 has-[:checked]:bg-indigo-50 has-[:checked]:border-indigo-600">
       <input
@@ -26,6 +36,7 @@ const Option = ({ register, img, planName, price }: OptionProps) => {
         {...register}
         hidden
         className="checked:group-checkbox:border"
+        defaultChecked={getValues().plan === planName}
       />
       <label
         htmlFor={planName}
@@ -36,7 +47,14 @@ const Option = ({ register, img, planName, price }: OptionProps) => {
           <span className="font-bold text-primary text-sm capitalize">
             {planName}
           </span>
-          <span className="text-gray-400 text-xs">${price}/mo</span>
+          <span className="text-gray-400 text-xs">
+            ${billingOption ? price * 10 : price}/mo
+          </span>
+          {billingOption && (
+            <span className="text-primary font-medium text-xs">
+              2 months free
+            </span>
+          )}
         </span>
       </label>
     </div>
@@ -44,13 +62,16 @@ const Option = ({ register, img, planName, price }: OptionProps) => {
 };
 
 const StepTwo = ({
-  getValues,
   errors,
   register,
   currentStep,
   setCurrentStep,
   trigger,
+  watch,
+  getValues,
 }: StepProps) => {
+  const billingOption = watch && watch("billingOption");
+
   return (
     <>
       <Header
@@ -70,6 +91,8 @@ const StepTwo = ({
               register={register("plan", {
                 required: "You must choose at least one!",
               })}
+              billingOption={billingOption}
+              getValues={getValues}
             />
           );
         })}
@@ -79,7 +102,7 @@ const StepTwo = ({
       <div className="flex gap-2 items-center py-2 justify-center bg-gray-100 rounded-lg">
         <p
           className={cn("", {
-            "font-bold": getValues().billingOption == false,
+            "font-bold": !billingOption,
           })}
         >
           Monthly
@@ -95,12 +118,12 @@ const StepTwo = ({
             hidden
             className="peer"
           />
-          <span className="block size-4 rounded-full bg-white my-auto transition-all duration-500 peer-checked:ml-auto" />
+          <span className="block size-4 rounded-full bg-white my-auto transition-all duration-500 peer-checked:translate-x-6" />
         </label>
 
         <p
           className={cn("", {
-            "font-bold": getValues().billingOption == true,
+            "font-bold": billingOption,
           })}
         >
           Yearly

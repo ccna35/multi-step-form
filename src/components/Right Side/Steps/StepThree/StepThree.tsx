@@ -2,24 +2,11 @@ import Header from "../../Header";
 import { StepProps } from "../../../../App";
 import { cn } from "../../../../utils/utils";
 import { UseFormRegisterReturn } from "react-hook-form";
+import { addOnList } from "../../../../constants/constants";
 
-const addOnList: Omit<OptionProps, "register">[] = [
-  {
-    title: "Online service",
-    description: "Access to multiplayer games",
-    price: 1,
-  },
-  { title: "Larger storage", description: "Extra 1TB of cloud save", price: 2 },
-  {
-    title: "Customizable Profile",
-    description: "Custom theme on your profile",
-    price: 2,
-  },
-];
-
-type OptionProps = {
+export type OptionProps = {
   register: UseFormRegisterReturn;
-  title: "Online service" | "Larger storage" | "Customizable Profile";
+  title: "Online service" | "Larger storage" | "Customizable profile";
   description: string;
   price: 1 | 2;
 };
